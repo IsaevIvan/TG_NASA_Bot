@@ -1,0 +1,12 @@
+---
+meta:
+  environment: python
+  toolchain:
+    name: pip
+    version: 3.8
+build:
+  requirementsPath: requirements.txt
+run:
+  scriptName: my_Nasa_bot_1.py
+  persistenceMount: /photo_of_day
+  containerPort: 80
