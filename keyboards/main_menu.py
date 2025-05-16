@@ -1,12 +1,15 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 def create_main_menu_keyboard() -> ReplyKeyboardMarkup:
-
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-    get_photo_button = KeyboardButton("🌌 Получить фото")
-    select_date_button = KeyboardButton("📅 Выбор даты фото")
-    help_button = KeyboardButton("❓ Помощь")
-    info_button = KeyboardButton("ℹ️ Информация")
-    keyboard.add(get_photo_button, select_date_button)
-    keyboard.add(help_button, info_button)
+    """Создает клавиатуру главного меню."""
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[
+        [
+            KeyboardButton(text="🌌 Получить фото"),
+            KeyboardButton(text="📅 Выбор даты фото")
+        ],
+        [
+            KeyboardButton(text="❓ Помощь"),
+            KeyboardButton(text="ℹ️ Информация")
+        ]
+    ], row_width=2) # row_width больше не нужен, т.к. структура задана в keyboard
     return keyboard

@@ -3,7 +3,7 @@ from aiogram.filters import Command, Filter  # Для фильтров
 from aiogram.filters.callback_data import CallbackData
 from aiogram.exceptions import TelegramAPIError
 from keyboards.calendar import create_calendar
-from .photo import send_apod # Исправленный импорт
+from .photo import send_apod
 import datetime
 
 # Создаем CallbackData для календаря
@@ -40,7 +40,7 @@ async def calendar_callback_handler(query: types.CallbackQuery, callback_data: C
     elif action == "day":
         day = callback_data.day
         selected_date = f"{year}-{month:02}-{day:02}" # Форматируем дату
-        await query.message.reply_text(f"Вы выбрали дату: {selected_date}")
+        await query.message.edit_text(f"Вы выбрали дату: {selected_date}") # Изменено на edit_text
         await send_apod(query.message, selected_date)  # Отправляем APOD для выбранной даты
     elif action in ["next", "prev"]:
         if action == "next":

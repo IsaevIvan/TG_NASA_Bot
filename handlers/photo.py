@@ -21,13 +21,9 @@ async def send_apod(message: types.Message, date: str = None):
             photo_url = data["url"]
             photo_caption = data.get("title", "Фото дня")
 
-            # Скачивание изображения
+            #  Отправляем фото по URL
             try:
-                async with httpx.AsyncClient() as client:
-                    response = await client.get(photo_url)
-                    response.raise_for_status()
-
-                    await message.reply_photo(photo=response.content, caption=photo_caption)
+                await message.reply_photo(photo=photo_url, caption=photo_caption)
 
             except httpx.HTTPStatusError as e:
                 print(f"Ошибка при скачивании изображения: {e}")
