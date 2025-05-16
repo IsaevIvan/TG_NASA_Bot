@@ -35,7 +35,7 @@ async def main():
     await set_default_commands(bot)
 
     try:
-        await dp.start_polling(bot)  #  Передаём bot в start_polling
+        await dp.start_polling(bot)
     except Exception as e:
         logging.exception("Произошла ошибка при запуске бота: %s", e)
     finally:
