@@ -12,17 +12,19 @@ class CalendarCallback(CallbackData, prefix="calendar"):
 
 def create_calendar(year: int, month: int) -> InlineKeyboardMarkup:
     """Создает Inline-календарь для указанного года и месяца."""
-    markup = InlineKeyboardMarkup(inline_keyboard=[])  # Инициализируем пустой клавиатурой
+    markup = InlineKeyboardMarkup(inline_keyboard=[])
 
-    # Добавляем кнопки с названиями месяцев
+    # Названия месяцев (меньше пробелов для лучшей читаемости)
     month_names = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"]
-    markup.inline_keyboard.append([InlineKeyboardButton(text=month_names[month - 1] + " " + str(year), callback_data="ignore")])
+    markup.inline_keyboard.append(
+        [InlineKeyboardButton(text=f"{month_names[month - 1]} {year}", callback_data="ignore")]
+    )
 
-    # Создаем заголовки дней недели
+    # Дни недели (меньше пробелов)
     days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
     markup.inline_keyboard.append([InlineKeyboardButton(text=day, callback_data="ignore") for day in days])
 
-    # Создаем календарь для месяца
+    # Календарь (более компактный)
     month_calendar = calendar.monthcalendar(year, month)
     for week in month_calendar:
         row = []
@@ -34,10 +36,9 @@ def create_calendar(year: int, month: int) -> InlineKeyboardMarkup:
                 row.append(InlineKeyboardButton(text=str(day), callback_data=callback_data))
         markup.inline_keyboard.append(row)
 
-    # Добавляем кнопки навигации
+    # Навигация (меньше пробелов)
     nav_buttons = [
         InlineKeyboardButton(text="<", callback_data=CalendarCallback(action="prev", year=year, month=month, day=1).pack()),
-        InlineKeyboardButton(text=" ", callback_data="ignore"),  # Пустая кнопка для центровки
         InlineKeyboardButton(text=">", callback_data=CalendarCallback(action="next", year=year, month=month, day=1).pack()),
     ]
     markup.inline_keyboard.append(nav_buttons)
