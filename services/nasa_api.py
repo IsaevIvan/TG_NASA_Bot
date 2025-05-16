@@ -34,7 +34,7 @@ async def get_apod(date: Optional[str] = None) -> Optional[Dict]:
 # import asyncio
 #
 # async def main():
-#     apod_data = await get_apod('2025-05-09')
+#     apod_data = await get_apod('2025-05-15')
 #     if apod_data:
 #         print(apod_data)
 #
