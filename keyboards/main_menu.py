@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 def create_main_menu_keyboard() -> ReplyKeyboardMarkup:
-    """Создает клавиатуру главного меню."""
+
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     get_photo_button = KeyboardButton("🌌 Получить фото")
     select_date_button = KeyboardButton("📅 Выбор даты фото")
