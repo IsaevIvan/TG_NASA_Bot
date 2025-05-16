@@ -1,9 +1,11 @@
 from aiogram import types, Dispatcher
-from aiogram.utils.exceptions import TelegramAPIError
+from aiogram.exceptions import TelegramAPIError
+from aiogram.filters import Filter
 from services.nasa_api import get_apod
 from config import PHOTO_OF_DAY_DIR
+from utils.date_utils import is_valid_date_format
 import os
-import httpx
+import httpx  # Для скачивания изображений
 
 
 async def send_apod(message: types.Message, date: str = None):
@@ -20,14 +22,16 @@ async def send_apod(message: types.Message, date: str = None):
             photo_caption = data.get("title", "Фото дня")
 
             # Скачивание изображения
-            async with httpx.AsyncClient() as client:
-                response = await client.get(photo_url)
-                response.raise_for_status()
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(photo_url)
+                    response.raise_for_status()
 
-                # Сохранение во временный файл (или в оперативную память, если небольшое)
-                photo_bytes = response.content
+                    await message.reply_photo(photo=response.content, caption=photo_caption)
 
-                await message.reply_photo(photo=photo_bytes, caption=photo_caption)  # Отправка как байты
+            except httpx.HTTPStatusError as e:
+                print(f"Ошибка при скачивании изображения: {e}")
+                await message.reply("Не удалось скачать изображение.")
 
         else:
             await message.reply("Сегодня не фото, а что-то другое.")  # Обработка случая, если это не картинка
@@ -40,15 +44,20 @@ async def send_apod(message: types.Message, date: str = None):
         await message.reply("Произошла неизвестная ошибка.")
 
 
+# Определяем фильтр для кнопки "🌌 Получить фото"
+class GetPhotoButtonFilter(Filter):
+    async def __call__(self, message: types.Message) -> bool:
+        return message.text == "🌌 Получить фото"
+
+
+# Определяем фильтр для проверки формата даты
+class DateFormatFilter(Filter):
+    async def __call__(self, message: types.Message) -> bool:
+        return is_valid_date_format(message.text)
+
+
 def register_handlers_photo(dp: Dispatcher):
-    dp.register_message_handler(send_apod, lambda message: message.text == "🌌 Получить фото")  # Кнопка главного меню
+    dp.message.register(send_apod, GetPhotoButtonFilter())  # Кнопка главного меню
 
     # Обработчик команды с датой (YYYY-MM-DD)
-    async def photo_with_date_handler(message: types.Message):
-        from ..utils.date_utils import is_valid_date_format
-        if is_valid_date_format(message.text):
-            await send_apod(message, message.text)
-        else:
-            await message.reply("Неверный формат даты. Используйте YYYY-MM-DD.")
-
-    dp.register_message_handler(photo_with_date_handler, content_types=types.ContentType.TEXT)
+    dp.message.register(send_apod, DateFormatFilter())
